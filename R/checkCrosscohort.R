@@ -12,6 +12,7 @@
 #' @export
 #'
 #' @examples # crossc_overlap <- checkSeq(meta, "./")
+source("utils.R")
 checkCrosscohort <- function(meta, dir){
   recordSeq <- c()
   for(i in 1:nrow(meta)) {

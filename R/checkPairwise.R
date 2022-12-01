@@ -17,6 +17,7 @@
 #'
 #' @examples # pairwise_overlap <- checkSeq(meta, "./")
 #'
+source("utils.R")
 checkPairwise <- function(meta, dir){
   uniqID <- unique(meta[, 2])
   overlapmat <- matrix(NA, length(uniqID), length(uniqID))
