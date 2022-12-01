@@ -1,0 +1,12 @@
+Package: TCRBroom
+Title: Explore pairwise and cross-cohort TCR overlaps 
+Version: 0.99.0
+Authors@R: 
+    c(
+    person("Ruoxing", "Li", email="ruoxingli@outlook.com", role = c("aut", "cre")),
+    person("Ziyi", "Li", email="zli16@mdanderson.org", role=c("aut","ctb"))
+    )
+Description: This package summarizes and plots pairwise overlap and cross-cohor overlap (sequences prevelance rate) for a batch of TCR data.
+License: GPL-3
+Encoding: UTF-8
+RoxygenNote: 7.2.1
