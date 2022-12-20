@@ -21,4 +21,5 @@ Title Generate oncoprint for cross-cohort overlap
 }
 \examples{
 # crossc_overlap <- checkSeq(meta, "./")
+
 }

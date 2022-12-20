@@ -52,3 +52,37 @@ GetOneSumTable <- function(thisID, meta, path) {
   colnames(counttable) <- paste0(rep(oneout$thismeta$sample_id, each = 2), c("_count", "_freq"))
   return(counttable)
 }
+
+
+#' # define color for the oncoprint
+#' # color for the background
+#' #' Title Define background color for the oncoprint 
+#' #'
+#' #' @param x A numeric vector or unit object specifying x-location.
+#' #' @param y A numeric vector or unit object specifying y-location.
+#' #' @param w A numeric vector or unit object specifying weight.
+#' #' @param h A numeric vector or unit object specifying height.
+#' #'
+#' #' @return Function used in oncoprint
+#' #'
+#' background <- function(x, y, w, h) {
+#'   grid.rect(x, y, w-unit(1, "pt"), h-unit(1, "pt"),
+#'             gp=gpar(fill="#CCCCCC", col=NA))
+#' }
+#' 
+#' # color for the "prev" in matrix
+#' #' Title Define prevalence color for oncoprint
+#' #' 
+#' #' @param x A numeric vector or unit object specifying x-location.
+#' #' @param y A numeric vector or unit object specifying y-location.
+#' #' @param w A numeric vector or unit object specifying weight.
+#' #' @param h A numeric vector or unit object specifying height.
+#' #'
+#' #' @return Function used in oncoprint
+#' #'
+#' #'
+#' prev <- function(x, y, w, h){
+#'     grid.rect(x, y, w-unit(1, "pt"), h-unit(1, "pt"),
+#'               gp=gpar(fill="#DB4B71", col="#DB4B71"))
+#'   }
+#' 
