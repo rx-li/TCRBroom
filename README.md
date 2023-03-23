@@ -14,17 +14,24 @@ and cross-cohort overlaps (sequences detected in all or majority of the samples)
 The package can also generate heatmap and OncoPrint to present the pairwise overlaps 
 and cross-cohort overlaps separately. 
 
+## Installation
+```
+devtools::install_github("rx-li/TCRBroom")
+```
+
 ## Input of the package and your TCR data
 To use this package, we expect the TCR data of each sample is saved in ```.tsv``` format in which the first column contains
 sequences' names and the other two columns contain the corresponding count and frequency rate.
 
-We expect two inputs of the package:
-* A meta table having two columns. The first column contains samples' names and the second contains the corresponding 
-subject ids. Each subject can have multiple samples. 
-* TCR-seq data path
+Two inputs are required for the package:
+* A meta table having two columns. The first column contains samples' names named as "sample_name" and the second column contains the corresponding 
+subject ids named as . Each subject can have multiple samples. 
+* Path to your TCR-seq data.
 
-## Run TCRBroom
+## Basic usage
 ```{r}
 checkPairwise(meta, path)
 checkCrosscohort(meta, path)
 ```
+## Vignettes
+A example workflow can be found at https://rx-li.github.io/tcrbroom_vignette.html.
