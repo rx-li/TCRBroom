@@ -20,14 +20,12 @@ knitr::opts_chunk$set(
 
 ## 1. Introduction
 The `TCRBroom` package is designed to check pairwise overlap and cross-cohort overlap
-for TCR samples. 
+for TCR samples. This vignette shows a simple workflow illustrating how TCRBroom package works. 
 
-This vignette shows a simple workflow illustrating how TCRBroom package works. 
-The data set that will be used throughout the example can be downloaded in the github. 
 
 ### Installation
 The package can be installed using `devtools` by the following commands
-```{r, results=FALSE, warning=FALSE, message=FALSE, eval=FALSE}
+```{r, results=FALSE, warning=FALSE, message=FALSE}
 library(devtools)
 install_github("rx-li/TCRBroom")
 ```
@@ -52,14 +50,26 @@ Then, we can check the pairwise overlap using the following command.
 ```{r}
 pairwise_table <- checkPairwise(meta, "../data/")
 ```
-The heatmap shows the magnitude of the pairwise overlaps. A matrix is also created for users to check the values of the overlaps. 
+The heatmap shows the magnitude of the pairwise overlaps. 
+A matrix is also created for users to check the values of the overlaps:
+```{r}
+pairwise_table[1:3, 1:3]
+```
 
 We can also call the function to check the cross-cohort overlap (sequence prevalence). 
-```{r}
-pairwise <- checkCrosscohort(meta, "../data/", seq.n=30)
+```{r, warning=FALSE, message=FALSE}
+crosscohort_table <- checkCrosscohort(meta, "../data/", seq.n=30)
 ```
-By default, the function will generate an OncoPrint showing prevalences for the 30 most prevalent sequences.
+By default, the function will generate an OncoPrint showing prevalence for the 30 most prevalent sequences.
 
+If users would like to identify the subjects with relatively fewer sequences (such as subjects with less than 3000 sequences), `ssampleIndicator` can generate a table to note those subjects. 
+
+```{r}
+seq_summary <- ssampleIndicator(meta, "../data/", low.seq=3000)
+head(seq_summary)
+```
+
+Subjects with sequences fewer than 3,000 will be noted as "Alert" in the "low_seq" column.
 
 ```{r}
 sessionInfo()
