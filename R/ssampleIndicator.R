@@ -27,6 +27,6 @@ ssampleIndicator <- function(meta, dir, low.seq=1000){
   }
   d <- data.frame(subject_id=uniqID, 
                   n_unique_seq=unlist(uniqSeq))
-  d$low_seq <- ifelse(d$n_unique_seq <= 1000, "Ouch", NA)
+  d$low_seq <- ifelse(d$n_unique_seq <= low.seq, "Alert", NA)
   return(d)
 }
