@@ -14,7 +14,7 @@
 #' @examples # crossc_overlap <- checkSeq(meta, "./")
 #' 
 
-checkCrosscohort <- function(meta, dir){
+checkCrosscohort <- function(meta, dir, seq.n=30){
   recordSeq <- c()
   for(i in 1:nrow(meta)) {
     oneseq <- read.table(paste0(dir, meta[i,1]),
@@ -60,7 +60,7 @@ checkCrosscohort <- function(meta, dir){
 
   column_title <- "OncoPrint"
   print(
-    oncoPrint(sumTable[1:40, ],
+    oncoPrint(sumTable[1:seq.n, ],
            alter_fun=alter_fun,
            col=c(prev="#DB4B71"),top_annotation=NULL,
            column_title=column_title)
