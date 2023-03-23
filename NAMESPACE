@@ -2,6 +2,7 @@
 
 export(checkCrosscohort)
 export(checkPairwise)
+export(ssampleIndicator)
 import(ComplexHeatmap)
 import(RColorBrewer)
 import(gplots)
