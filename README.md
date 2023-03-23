@@ -2,7 +2,7 @@
 A package to summarize and plot the pairwise and cross-cohort overlaps for TCR-seq data. 
 
 ## Introduction
-TCR sequencing (TCR-seq) has been developed to =track the useful information of T cell clonality.
+TCR sequencing (TCR-seq) has been developed to track the useful information of T cell clonality.
 Similar to other high-throughput experiments, contamination can happen in several steps of TCR-seq, 
 which creates artifacts in the data, leading to inaccurate or even biased results. 
 Most of the existing methods assume “clean” TCR-seq data with minimum contamination as the starting point.
