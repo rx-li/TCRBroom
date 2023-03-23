@@ -4,7 +4,7 @@
 \alias{checkCrosscohort}
 \title{Title Generate oncoprint for cross-cohort overlap}
 \usage{
-checkCrosscohort(meta, dir)
+checkCrosscohort(meta, dir, seq.n = 30)
 }
 \arguments{
 \item{meta}{A meta table that contains all samples' names and the corresponding

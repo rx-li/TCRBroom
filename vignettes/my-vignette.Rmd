@@ -1,0 +1,71 @@
+---
+title: "TCRBroom: an example workflow"
+output: 
+  BiocStyle::html_document:
+    toc: true
+    number_sections: false
+
+vignette: >
+  %\VignetteIndexEntry{my-vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## 1. Introduction
+The `TCRBroom` package is designed to check pairwise overlap and cross-cohort overlap
+for TCR samples. 
+
+This vignette shows a simple workflow illustrating how TCRBroom package works. 
+The data set that will be used throughout the example can be downloaded in the github. 
+
+### Installation
+The package can be installed using `devtools` by the following commands
+```{r, results=FALSE, warning=FALSE, message=FALSE, eval=FALSE}
+library(devtools)
+install_github("rx-li/TCRBroom")
+```
+
+After the installation, the package can be loaded with
+```{r, results=FALSE, warning=FALSE, message=FALSE}
+library(TCRBroom)
+```
+
+## 2. Example workflow
+The data we used in this example workflow can be found in the folder `data/`. 18 samples from 10 patients are simulated based on the real contaminated data. 
+
+First, we need to read the meta files. The meta files includes sample names and 
+their corresponding subject ID. 
+
+```{r}
+meta <- read.csv("../data/meta.csv")
+head(meta)
+```
+
+Then, we can check the pairwise overlap using the following command. 
+```{r}
+pairwise_table <- checkPairwise(meta, "../data/")
+```
+The heatmap shows the magnitude of the pairwise overlaps. A matrix is also created for users to check the values of the overlaps. 
+
+We can also call the function to check the cross-cohort overlap (sequence prevalence). 
+```{r}
+pairwise <- checkCrosscohort(meta, "../data/", seq.n=30)
+```
+By default, the function will generate an OncoPrint showing prevalences for the 30 most prevalent sequences.
+
+
+```{r}
+sessionInfo()
+```
+
+
+
+
+

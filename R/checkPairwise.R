@@ -42,10 +42,10 @@ checkPairwise <- function(meta, dir){
   }
   diag(overlapmat2) <- 1
   propmat <- signif(overlapmat2, 2)
-  diag(propmat) <- 0
+  diag(propmat) <- NA
   Colors=rev(brewer.pal(11,"Spectral"))
   Colors=colorRampPalette(Colors)(100)
   heatmap.2(propmat, Rowv=FALSE, Colv=FALSE, dendrogram='none', trace="none",
-            col=Colors)
+            col=Colors, density.info="none")
   return(propmat)
 }
