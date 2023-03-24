@@ -58,7 +58,7 @@ checkCrosscohort <- function(meta, dir, seq.n=30){
   sumTable <- as.matrix(sumTable)
   rownames(sumTable) <- paste0("Sequence", seq(nrow(sumTable)))
 
-  column_title <- "OncoPrint"
+  column_title <- "Prevalence"
   print(
     oncoPrint(sumTable[1:seq.n, ],
            alter_fun=alter_fun,
