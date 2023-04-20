@@ -11,7 +11,7 @@
 ReadOnePat <- function(thismeta, data_dir) {
   onealldata <- list()
   for(i in 1:nrow(thismeta)) {
-    onealldata[[i]] <- read.table(paste0(data_dir, thismeta[i,1]),
+    onealldata[[i]] <- read.table(paste0(data_dir, thismeta[i, 1]),
                                   colClasses = c("character", "numeric", "numeric"),
                                   header = TRUE, sep = "\t")
   }

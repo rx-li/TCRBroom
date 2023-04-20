@@ -36,7 +36,7 @@ detectOutliers <- function(vec, iters, c, jags_inits, jags_params, jags_model){
     y <- vec[vec < q]
     
     if(k <= length(y)){
-      cat("Converge! Iters =", i)
+      cat("Converge! Iters =", i-1)
       break
     }
     
