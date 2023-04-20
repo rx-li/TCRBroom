@@ -7,6 +7,7 @@ Authors@R:
     person("Ziyi", "Li", email="zli16@mdanderson.org", role=c("aut","ctb"))
     )
 Description: This package summarizes and plots pairwise overlap and cross-cohor overlap (sequences prevelance rate) for a batch of TCR data.
+Imports: ComplexHeatmap, R2jags, RColorBrewer, gpplots, grid
 License: GPL-3
 Encoding: UTF-8
 RoxygenNote: 7.2.0
