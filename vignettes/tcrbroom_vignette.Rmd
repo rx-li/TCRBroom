@@ -24,6 +24,8 @@ for TCR samples. This vignette shows a simple workflow illustrating how TCRBroom
 
 
 ### Installation
+Before the installation, please make sure you have installed JAGS-4.x.y.exe from http://www.sourceforge.net/projects/mcmc-jags/files. 
+
 The package can be installed using `devtools` by the following commands
 ```{r, results=FALSE, warning=FALSE, message=FALSE}
 library(devtools)
@@ -36,6 +38,8 @@ library(TCRBroom)
 ```
 
 ## 2. Example workflow
+
+### Plot pairwise and crosscohort overlaps 
 The data we used in this example workflow can be found in the folder `data/`. 18 samples from 10 patients are simulated based on the real contaminated data. 
 
 First, we need to read the meta files. The meta files includes sample names and 
@@ -43,7 +47,9 @@ their corresponding subject ID.
 
 ```{r}
 meta <- read.csv("../data/meta.csv")
+colnames(meta) <- c("sample_name", "subject_id")
 head(meta)
+dim(meta)
 ```
 
 Then, we can check the pairwise overlap using the following command. 
@@ -68,8 +74,63 @@ If users would like to identify the subjects with relatively fewer sequences (su
 seq_summary <- ssampleIndicator(meta, "../data/", low.seq=3000)
 head(seq_summary)
 ```
-
 Subjects with sequences fewer than 3,000 will be noted as "Alert" in the "low_seq" column.
+
+### Identify outliers
+In order to identify pairwise overlap outliers, user need to provide a hierarchical model and initials of the parameters for the model.
+```{r}
+model <- function(){
+  for(k in 1:k){
+    y[k]~dbeta(alpha, beta)
+  }
+  alpha~dlnorm(1.14, 0.51)
+  beta~dlnorm(9.60, 1.09)
+  # specify the prior based on the clean data
+  # get the alpha and beta
+  # find the outlier iterately 
+}
+model_params <- c("alpha", "beta")
+model_inits <- function(){
+  list("alpha" = 1, "beta" = 1)
+}
+```
+
+Then the pairwise overlap values need to be formatted as a named vector.
+```{r}
+names_vector <- colnames(pairwise_table)
+names_paired <- unlist(
+  lapply(c(2:ncol(pairwise_table)), function(x) paste0(names_vector[x], "+", names_vector[1:x-1]))
+  )
+pairwise_v <- as.vector(pairwise_table)
+pairwise_v <- na.omit(pairwise_v)
+names(pairwise_v) <- names_paired
+# We used a Gamma model in the example, so we will filter out 0s in the vector. 
+pairwise_v <- pairwise_v[pairwise_v > 0]
+```
+
+After that, a function can be called to identify the outliers given a quantile cutoff. 
+```{r}
+results <- detectOutliers(pairwise_v, iters=10, c=0.95, model_inits, model_params, model)
+```
+At the 3rd iteration, all outliers were detected. We can check the outliers by 
+```{r}
+results$outliers[[3]]
+```
+Empirical P values can be calculated for the cross-cohort overlap values using a reference vector. 
+For this example, we randomly generate a reference vector. 
+```{r}
+ref_v <- runif(50000, 0, 0.3)
+# extract the prevalence proportion
+crosscohort_v <- crosscohort_table[, dim(crosscohort_table)[2]]
+# calculate the empirical P values
+p_table <- Pcalculator(ref_v, crosscohort_v)
+# Here we eliminate row names for presenting since the sequences' names are extremely long.
+rownames(p_table) <- NULL
+head(p_table)
+```
+
+
+
 
 ```{r}
 sessionInfo()
