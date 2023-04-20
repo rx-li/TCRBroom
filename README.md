@@ -15,6 +15,7 @@ The package can also generate heatmap and OncoPrint to present the pairwise over
 and cross-cohort overlaps separately. 
 
 ## Installation
+Before the installation, please make sure you have installed JAGS-4.x.y.exe from http://www.sourceforge.net/projects/mcmc-jags/files. 
 ```
 devtools::install_github("rx-li/TCRBroom")
 ```
