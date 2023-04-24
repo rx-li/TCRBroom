@@ -48,7 +48,7 @@ detectOutliers <- function(vec, iters, c, jags_inits, jags_params, jags_model){
     k.l <- c(k.l, k)
     i <- i + 1
   }
-  return(list(quantiles = q.l, 
+  return(list(critical_values = q.l, 
               outliers = index.l, 
               coefficients = coe.l))
 }
