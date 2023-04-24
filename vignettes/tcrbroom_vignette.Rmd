@@ -18,12 +18,12 @@ knitr::opts_chunk$set(
 )
 ```
 
-## 1. Introduction
+# 1. Introduction
 The `TCRBroom` package is designed to check pairwise overlap and cross-cohort overlap
 for TCR samples. This vignette shows a simple workflow illustrating how TCRBroom package works. 
 
 
-### Installation
+## Installation
 Before the installation, please make sure you have installed JAGS-4.x.y.exe from http://www.sourceforge.net/projects/mcmc-jags/files. 
 
 The package can be installed using `devtools` by the following commands
@@ -37,66 +37,73 @@ After the installation, the package can be loaded with
 library(TCRBroom)
 ```
 
-## 2. Example workflow
+# 2. Example workflow
 
-### Plot pairwise and crosscohort overlaps 
-The data we used in this example workflow can be found in the folder `data/`. 18 samples from 10 patients are simulated based on the real contaminated data. 
+## Plot pairwise and crosscohort overlaps 
+The TCR-seq data and meta table that we used in this example workflow can be found under the folder `data/`. 
+18 samples from 10 patients are simulated based on the real contaminated data. 
 
-First, we need to read the meta files. The meta files includes sample names and 
-their corresponding subject ID. 
-
+First, we need to read the meta table, which documents sample names and 
+their corresponding subject IDs. 
 ```{r}
 meta <- read.csv("../data/meta.csv")
+# Please make sure that the column name are exactly "sample_name" and "subject_id".
 colnames(meta) <- c("sample_name", "subject_id")
 head(meta)
 dim(meta)
 ```
 
-Then, we can check the pairwise overlap using the following command. 
+### Pairwise overlap
+We can check the pairwise overlap between each two subjects using the following command. 
 ```{r}
 pairwise_table <- checkPairwise(meta, "../data/")
 ```
+
 The heatmap shows the magnitude of the pairwise overlaps. 
 A matrix is also created for users to check the values of the overlaps:
 ```{r}
 pairwise_table[1:3, 1:3]
 ```
 
-We can also call the function to check the cross-cohort overlap (sequence prevalence). 
+### Cross-cohort overlap
+We can call the function `checkCrosscohort` to check the cross-cohort overlap (sequence prevalence). 
 ```{r, warning=FALSE, message=FALSE}
 crosscohort_table <- checkCrosscohort(meta, "../data/", seq.n=30)
 ```
-By default, the function will generate an OncoPrint showing prevalence for the 30 most prevalent sequences.
 
+By default, the function will generate an heatmap showing prevalence for the 30 most prevalent sequences.
+
+### Samples with few seqeunces identification
 If users would like to identify the subjects with relatively fewer sequences (such as subjects with less than 3000 sequences), `ssampleIndicator` can generate a table to note those subjects. 
-
 ```{r}
 seq_summary <- ssampleIndicator(meta, "../data/", low.seq=3000)
 head(seq_summary)
 ```
-Subjects with sequences fewer than 3,000 will be noted as "Alert" in the "low_seq" column.
+Subjects with sequences fewer than 3,000 will be flagged as "Alert" in the "low_seq" column.
 
-### Identify outliers
-In order to identify pairwise overlap outliers, user need to provide a hierarchical model and initials of the parameters for the model.
+## Identify outliers
+
+### Pairwise overlap
+In order to identify pairwise overlap outliers, user need to provide a hierarchical `jags` model 
+and the initial values of the parameters for the model. 
 ```{r}
 model <- function(){
   for(k in 1:k){
-    y[k]~dbeta(alpha, beta)
+    y[k]~dbeta(alpha, beta) 
   }
+  # Specify the prior based on the clean data
   alpha~dlnorm(1.14, 0.51)
   beta~dlnorm(9.60, 1.09)
-  # specify the prior based on the clean data
-  # get the alpha and beta
-  # find the outlier iterately 
 }
 model_params <- c("alpha", "beta")
 model_inits <- function(){
-  list("alpha" = 1, "beta" = 1)
+  list("alpha" = 1, "beta" = 1000) # Initial value of the parameteres
 }
 ```
 
-Then the pairwise overlap values need to be formatted as a named vector.
+Another step is to format the pairwise overlap table as a named vector.
 ```{r}
+# Extract the subject's names
 names_vector <- colnames(pairwise_table)
 names_paired <- unlist(
   lapply(c(2:ncol(pairwise_table)), function(x) paste0(names_vector[x], "+", names_vector[1:x-1]))
@@ -104,21 +111,68 @@ names_paired <- unlist(
 pairwise_v <- as.vector(pairwise_table)
 pairwise_v <- na.omit(pairwise_v)
 names(pairwise_v) <- names_paired
-# We used a Gamma model in the example, so we will filter out 0s in the vector. 
+# We used a beta distribution in the example, so we will filter out 0s in the vector. 
 pairwise_v <- pairwise_v[pairwise_v > 0]
 ```
 
-After that, a function can be called to identify the outliers given a quantile cutoff. 
+Then, function `detectOutliers` can be called to identify the outliers given 
+a cutoff value.  
 ```{r}
 results <- detectOutliers(pairwise_v, iters=10, c=0.95, model_inits, model_params, model)
 ```
-At the 3rd iteration, all outliers were detected. We can check the outliers by 
+
+
+After 3 rounds, all outliers were detected. We can take a look at the output.
 ```{r}
+str(results)
+```
+The output includes the corresponding critical value of the cutoff, outliers, and
+the parameters of the posterior distribution for each round. 
+
+We can check the outliers by 
+```{r}
+# Outliers are detected after 3 rounds
 results$outliers[[3]]
 ```
-Empirical P values can be calculated for the cross-cohort overlap values using a reference vector. 
-For this example, we randomly generate a reference vector. 
+The first outlier is the overlap between subjects "P04" and "P02". 
+We can check the overlap further using function `check2Samples`. 
 ```{r}
+tables_p04_p02 <- check2Samples(meta, "P02", "P06", data_dir="../data/")
+```
+
+"tables_p04_p02" will include two matrix: One show the number of overlap between 
+any two samples of subjects "P04" and "P02". The other show the percentage of overlap 
+between any two samples of subjects "P04" and "P02".
+```{r}
+tables_p04_p02$overlap_n
+tables_p04_p02$overlap_pct
+```
+Moreover, we can visualize the percentage of the overlap to get a better sense of which sample 
+can be thought as a source of contamination. 
+```{r}
+library(RColorBrewer)
+library(gplots)
+Colors=rev(brewer.pal(11,"Spectral"))
+Colors=colorRampPalette(Colors)(100)
+
+table_pct <- tables_p04_p02$overlap_pct
+# rename the table for visualization
+colnames(table_pct) <- gsub(".tsv", "", colnames(table_pct))
+rownames(table_pct) <- gsub(".tsv", "", rownames(table_pct))
+# create the heatmap
+heatmap.2(as.matrix(table_pct[1:nrow(table_pct)-1, 1:ncol(table_pct)-1]), 
+          col=Colors, Rowv=FALSE, Colv=FALSE,
+          dendrogram='none', trace="none", cexRow=1, cexCol=1, density.info="none")
+```
+
+We can see that sample "s2_2" have relatively heavy overlap with the samples of subject "P06".
+We can consider to remove sample "s2_2". 
+
+### Cross-cohort overlap
+Empirical P values can be calculated for the cross-cohort overlap values using a reference vector. 
+For this example, we will randomly generate a reference vector. 
+```{r}
+# Randomly generate the reference vector 
 ref_v <- runif(50000, 0, 0.3)
 # extract the prevalence proportion
 crosscohort_v <- crosscohort_table[, dim(crosscohort_table)[2]]
@@ -128,7 +182,10 @@ p_table <- Pcalculator(ref_v, crosscohort_v)
 rownames(p_table) <- NULL
 head(p_table)
 ```
-
+If we set the cutoff value for adjusted P value as 0.05, then we can extract the outliers by
+```{r}
+outliers <- p_table[p_table$p_adjust <= 0.05, ]
+```
 
 
 
