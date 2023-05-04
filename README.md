@@ -19,6 +19,10 @@ Before the installation, please make sure you have installed JAGS-4.x.y.exe from
 ```
 devtools::install_github("rx-li/TCRBroom")
 ```
+Alternatively, you can build the package using the Dockerfile. 
+```
+docker build -t Dockerfile
+```
 
 ## Input of the package and your TCR data
 To use this package, we expect the TCR data of each sample is saved in ```.tsv``` format in which the first column contains
